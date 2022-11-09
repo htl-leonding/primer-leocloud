@@ -1,25 +1,70 @@
 = primer-leocloud
+:icons: font
+:experimental:
+:imagesdir: images
+//Need this blank line after ifdef, don't know why...
+ifdef::backend-html5[]
+
+// https://fontawesome.com/v4.7.0/icons/
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/asciidoctor-docker-template/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/quarkus-seminar/] ‏ ‏ ‎
+icon:home[link=https://bit.ly/htlleonding]
+endif::backend-html5[]
 
 == Install kubernetes extension
 
+.Liste aller Extensions
+----
 ./mvnw quarkus:list-extensions
+----
 
+.Installieren der benötigten Extensions
+----
 ./mvnw quarkus:add-extension -Dextensions="kubernetes,jib"
+----
 
-== Login into Registry
+== Docker-Image-Registry
+
+=== Erstellen eines Zugriffstokens
+
+. Öffnen von https://github.com
+. `Settings` - `<> Developer Settings` - `Personal Access Tokens` - `Tokens (classic)` - kbd:[Generate new token] - Generate new token (classic)
+
+. Give the token a name i.e. `ghcr-token`
+
+. Give a expiration date i.e. `90 days`
+
+. Check `write:packages`
++
+image::token-ghcr.png[]
+
+. Click kbd:[Generate token]
++
+image::token-ghcr2.png[]
+
+. Copy the token into a text-file
++
+image::token-ghcr3.png[]
+
+
+=== Login into Registry
+
+* Wir verwenden die github-registry!
 
 [source,bash]
 ----
-docker login registry.cloud.htl-leonding.ac.at
+docker login ghcr.io
 ----
 
 .output
 ----
-Username: t.stuetz@htl-leonding.ac.at
-Password: *********
+Username: t.stuetz@htl-leonding.ac.at # <.>
+Password: *********  # <.>
 Login Succeeded
 ----
 
+<.> Use your github account name
+<.> For the password use the token
 
 == Create and Push the Container Image using Jib
 
@@ -92,7 +137,7 @@ Login Succeeded
 
 [source,bash]
 ----
-kubectl apply -f target/kubernetes/kubernetes.yml
+kubectl apply -f target/kubernetes/kubernetes.yaml
 ----
 
 .output
